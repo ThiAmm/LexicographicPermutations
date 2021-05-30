@@ -4,28 +4,26 @@ using System.Linq;
 
 namespace permutations
 {
+    public interface IPermutations<T>
+    {
+        List<List<T>> getPermutations(List<T> values);
+    }
+
+
     public class Permutations<T>
     {
         public List<List<T>> getPermutations(List<T> values)
         {
             List<Tuple<int, T>> indexedValues = new List<Tuple<int, T>>();
-            for (int i = 0; i < values.Count; i++)
-            {
-                indexedValues.Add(new Tuple<int, T>(i, values.ElementAt(i)));
-            }
+            int index = 0;
+            indexedValues = values.ConvertAll(value => new Tuple<int, T>(index++, value));
+
             List<List<Tuple<int, T>>> indexedPermutations = getIndexedPermutations(indexedValues);
 
-            List<List<T>> permutations = new List<List<T>>();
-            foreach(List<Tuple<int,T>> indexedPermutation in indexedPermutations)
-            {
-                List<T> permutation = new List<T>();
-                foreach (Tuple<int,T> eintragInIndexPermutation in indexedPermutation)
-                {
-                    permutation.Add(eintragInIndexPermutation.Item2);
-                }
-                permutations.Add(permutation);
-            }
-            return permutations;
+            return indexedPermutations.ConvertAll<List<T>>(indexedPermutation => 
+                indexedPermutation.ConvertAll<T>(
+                    new Converter<Tuple<int,T>, T>(indexedValue => indexedValue.Item2)
+                ));
         }
 
         private List<List<Tuple<int, T>>> getIndexedPermutations(List<Tuple<int, T>> indexedValues)
