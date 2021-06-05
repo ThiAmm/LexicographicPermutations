@@ -10,7 +10,7 @@ namespace permutations
     }
 
 
-    public class Permutations<T>
+    public class Permutations<T> : IPermutations<T>
     {
         public List<List<T>> getPermutations(List<T> values)
         {
